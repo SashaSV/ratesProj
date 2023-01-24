@@ -17,6 +17,7 @@ class Currancy(db.Model):
     def __repr__(self):
         return '%r' % self.code
 
+# Таблица с курсами валют на дату
 class CurrancySchema(marshmallow.SQLAlchemySchema):
     class Meta:
         model = Currancy

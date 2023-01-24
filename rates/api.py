@@ -11,7 +11,7 @@ import os
 __api_key = "688a4ecad5e7d69ddf9f08b1"
 
 
-def get_rate_hystory(currancy_code=None, date_from=None):
+def get_rate_history(currancy_code=None, date_from=None):
 
     rates = []
 
@@ -34,6 +34,7 @@ def get_rate_hystory(currancy_code=None, date_from=None):
 
     return rates
 
+# заполнить справочник валют, которые нужно обновлять
 def fillTableCurr():
         if not Currancy.query.filter(Currancy.code == 'UAH').first():
             cur = Currancy('UAH', 'Hryvnia', 'UKRAINE', 980)
@@ -118,11 +119,16 @@ def get_external_rate(code = None):
                 db.session.commit()
     return ret_rate
 
+#заполнить таблицу курсов историей
 def get_external_history_rate(days):
-    import requests
+
+    # дата начала истории
     day_start = datetime.now().today() - timedelta(days=days)
+
+    # дата окончания истории
     day_finish = datetime.now().today()-timedelta(days=1)
 
+    # сформировать файл для кеша
     cache_filename = get_filename_for_cache_ft(date_from=day_start, date_to=day_finish)
 
     # open cache from file
@@ -138,30 +144,39 @@ def get_external_history_rate(days):
             "apikey": "u7QHuc8Pf6n5niDOLwLdoaVB9bcJlpvp"
         }
 
+        # получить историю курсов по внешнему API
         response = requests.request("GET", url, headers=headers, data=payload)
         result = response.text
         conversion_rates = json.loads(result)
 
+        # сохранить в кеш
         dump_to_json(cache_filename, conversion_rates)
 
     rates = conversion_rates.get('rates')
 
+    # выгрузить все валюты, по которым нужно сохранить историю
     currances = Currancy.query.all()
 
     for date_str, rates in rates.items():
         for curr in currances:
             if rates.__contains__(curr.code):
-
+                # если по валюте нужно сохранять курс в базу, делаем это
                 date = datetime.strptime(date_str, '%Y-%m-%d').date()
                 print(date, curr.code, rates[curr.code])
+
+                # проверяем, есть ли уже такой курс в базе
                 rate = Currancy_rates.query. \
                     filter(Currancy_rates.id_curr == curr.id). \
                     filter(Currancy_rates.date == date).first()
+
                 if not rate:
+                    # если курса нет, добавляем
                     rate = Currancy_rates(curr.id, rates.get(curr.code), date)
                     db.session.add(rate)
                 else:
+                    # если курс есть, обновляем
                     rate.rate = rates.get(curr.code)
+
                 db.session.commit()
 
 # Сохранение JSON <data> в файл <filename>
@@ -172,6 +187,7 @@ def dump_to_json(filename, data, **kwargs):
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(data, f, **kwargs)
 
+# Загрузить и вернуть JSON <data> с файла <cache_filename>
 def get_file_from_cache(cache_filename):
     conversion_rates = []
     if os.path.exists(cache_filename):
@@ -179,12 +195,15 @@ def get_file_from_cache(cache_filename):
             conversion_rates = json.load(json_file)
     return conversion_rates
 
+# сформировать имя файла для кеша по дате
 def get_filename_for_cache(date):
     return '{0}\\cache\\{1}.json'.format(os.getcwd(), date.date())
 
+# сформировать имя файла для кеша по датам периода
 def get_filename_for_cache_ft(date_from, date_to):
     return '{0}\\cache\\{1}_{2}.json'.format(os.getcwd(), date_from.date(), date_to.date())
 
+# вернуть JSON с курсами, которые определили по внешенму API
 def get_rates_from_external_api(url, cache_filename):
 
     # Making our request
