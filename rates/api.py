@@ -10,7 +10,6 @@ import os
 
 __api_key = "688a4ecad5e7d69ddf9f08b1"
 
-
 def get_rate_history(currancy_code=None, date_from=None):
 
     rates = []
@@ -114,8 +113,8 @@ def get_external_rate(code = None):
 
             curr = Currancy.query.filter(Currancy.code == code).first()
             if curr:
-                ret_rate.id_curr = curr.id
                 # если валюту передали проверить, нужно ли ее обновлять
+                ret_rate.id_curr = curr.id
                 db.session.commit()
     return ret_rate
 
