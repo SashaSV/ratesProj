@@ -72,7 +72,7 @@ def get_external_rate(code = None):
     # проверить кеш с курсом на дату
     conversion_rates = get_file_from_cache(cache_filename)
 
-    #ret_rate = []
+    ret_rate = []
 
     if len(conversion_rates) == 0:
         url = 'https://v6.exchangerate-api.com/v6/{0}/latest/USD'.format(__api_key)
