@@ -4,43 +4,8 @@ from rates.model import db, Currancy, Currancy_rates, currancysSchema, ratesSche
 from rates.api import fillTableCurr, get_rate_history, get_external_history_rate
 from datetime import datetime
 
-#import marshmallow as ma
-#from flask_smorest import Api, Blueprint, abort
-#from flask.views import MethodView
-
 app = create_app()
 app.app_context().push()
-
-# app.config["API_TITLE"] = "Currancy rates API"
-# app.config["API_VERSION"] = "v1"
-# app.config["OPENAPI_VERSION"] = "2.1.1"
-
-# api = Api(app)
-# blp = Blueprint("rates", "rates", url_prefix="/api", description="Operations on rates")
-#
-#
-# class CurancySchema(ma.Schema):
-#     id = ma.fields.Int(dump_only=True)
-#     code = ma.fields.String()
-#     name = ma.fields.String()
-# class CurancyQueryArgsSchema(ma.Schema):
-#     code = ma.fields.String()
-#     data = ma.fields.String()
-
-# # Вернуть все валюты, по которым сохраняется курс
-# @blp.route("/")
-# class CurancyAll(MethodView):
-#     @blp.response(200, CurancySchema(many=True))
-#     def get(self):
-#         """List all currency"""
-#         return Currancy.query.all()
-# @blp.route("/currency/history")
-# class RatesHystory(MethodView):
-#     #@blp.arguments(CurancyQueryArgsSchema, location="query")
-#     @blp.response(200, CurancySchema(many=True))
-#     def get(self, c_code, d_from):
-#         """Get rates history currency"""
-#         return get_rate_hystory(c_code, d_from)
 
 @app.route('/api/currency/history')
 def get_rate_history_rest():
@@ -85,3 +50,41 @@ if __name__ == '__main__':
     #api.register_blueprint(blp)
     app.run(debug=True)
 
+
+
+
+#import marshmallow as ma
+#from flask_smorest import Api, Blueprint, abort
+#from flask.views import MethodView
+
+
+# app.config["API_TITLE"] = "Currancy rates API"
+# app.config["API_VERSION"] = "v1"
+# app.config["OPENAPI_VERSION"] = "2.1.1"
+
+# api = Api(app)
+# blp = Blueprint("rates", "rates", url_prefix="/api", description="Operations on rates")
+#
+#
+# class CurancySchema(ma.Schema):
+#     id = ma.fields.Int(dump_only=True)
+#     code = ma.fields.String()
+#     name = ma.fields.String()
+# class CurancyQueryArgsSchema(ma.Schema):
+#     code = ma.fields.String()
+#     data = ma.fields.String()
+
+# # Вернуть все валюты, по которым сохраняется курс
+# @blp.route("/")
+# class CurancyAll(MethodView):
+#     @blp.response(200, CurancySchema(many=True))
+#     def get(self):
+#         """List all currency"""
+#         return Currancy.query.all()
+# @blp.route("/currency/history")
+# class RatesHystory(MethodView):
+#     #@blp.arguments(CurancyQueryArgsSchema, location="query")
+#     @blp.response(200, CurancySchema(many=True))
+#     def get(self, c_code, d_from):
+#         """Get rates history currency"""
+#         return get_rate_hystory(c_code, d_from)
