@@ -2,16 +2,14 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
-
+from sqlalchemy import create_engine
+from sqlalchemy_utils import database_exists, create_database
 
 db = SQLAlchemy()
 migrate = Migrate()
 marshmallow = Marshmallow()
 
 def create_app():
-    from sqlalchemy import create_engine
-    from sqlalchemy_utils import database_exists, create_database
-
     engine = create_engine("postgresql://postgres:111111@localhost:5432/convertor_test")
     if not database_exists(engine.url):
         create_database(engine.url)

@@ -1,4 +1,5 @@
 from rates import db, marshmallow
+from marshmallow_sqlalchemy import SQLAlchemySchema
 
 # Таблица с валютами, по которым необходимо хранить курсы
 class Currancy(db.Model):
@@ -18,7 +19,7 @@ class Currancy(db.Model):
         return '%r' % self.code
 
 # Таблица с курсами валют на дату
-class CurrancySchema(marshmallow.SQLAlchemySchema):
+class CurrancySchema(SQLAlchemySchema):
     class Meta:
         model = Currancy
 
@@ -48,7 +49,7 @@ class Currancy_rates(db.Model):
     def __repr__(self):
         return 'Date {0}, Rate {1}, {2}'.format(self.date, str(self.rate), self.id_curr)
 
-class Currancy_ratesSchema(marshmallow.SQLAlchemySchema):
+class Currancy_ratesSchema(SQLAlchemySchema):
     class Meta:
         model = Currancy_rates
 

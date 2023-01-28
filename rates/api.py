@@ -1,8 +1,6 @@
 import requests
 from rates import db
 from rates.model import Currancy_rates, Currancy, ratesSchema, Currancy_ratesSchema
-from flask import jsonify
-
 from datetime import datetime
 from datetime import timedelta
 import json
@@ -22,8 +20,8 @@ def get_rate_history(currancy_code=None, date_from=None):
     if cur_id or not currancy_code:
 
         rates = ratesSchema.dump(Currancy_rates.query. \
-            filter(True if currancy_code == None else Currancy_rates.id_curr == cur_id.id). \
-            filter(True if date_from == None else Currancy_rates.date >= datetime.strptime(date_from, '%Y-%m-%d').date()).\
+            filter(True if currancy_code is None else Currancy_rates.id_curr == cur_id.id). \
+            filter(True if date_from is None else Currancy_rates.date >= datetime.strptime(date_from, '%Y-%m-%d').date()).\
             order_by(Currancy_rates.id_curr, Currancy_rates.date).all())
     else:
         if currancy_code:
